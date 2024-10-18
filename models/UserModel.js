@@ -1,13 +1,37 @@
-const db = require('../db');  // Conexão com banco de dados
+const db = require('../config_back/db')
+const bcrypt = require('bcrypt');
 
-exports.getAllUsers = (callback) => {
-    db.query('SELECT * FROM users', callback);
-};
+const User = db.sequelize.define('user', {
+  id: {
+    type: db.Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  Nome: {
+    type: db.Sequelize.STRING,
+    allowNull: false,
+  },
+  Email: {
+    type: db.Sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  Senha: {
+    type: db.Sequelize.STRING,
+    allowNull: false,
+  },
+  Cargo: {
+    type: db.Sequelize.STRING,
+    allowNull: false,
+  },
+ 
+},
+  { timestamps: false, freezeTableName: true });
+User.beforeCreate(async (user, options) => {
+  const saltRounds = 10; 
+  user.senha = await bcrypt.hash(user.senha, saltRounds);
+});
 
-exports.createUser = (username, password, callback) => {
-    db.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, password], callback);
-};
-
-exports.deleteUser = (id, callback) => {
-    db.query('DELETE FROM users WHERE id = ?', [id], callback);
-};
+// User.sync({force: true})
+module.exports = User;
