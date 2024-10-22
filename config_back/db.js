@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize")
-const database = require("../docs/database")
+const database = require("../docs/database.js")
 
 //Conexão com o DB MYSQL
 

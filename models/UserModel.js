@@ -1,4 +1,4 @@
-const db = require('../config_back/db')
+const db = require('../config_back/db');
 const bcrypt = require('bcrypt');
 
 const User = db.sequelize.define('user', {
@@ -25,13 +25,41 @@ const User = db.sequelize.define('user', {
     type: db.Sequelize.STRING,
     allowNull: false,
   },
- 
 },
   { timestamps: false, freezeTableName: true });
+
+// Hash da senha antes de criar o usuário
 User.beforeCreate(async (user, options) => {
-  const saltRounds = 10; 
-  user.senha = await bcrypt.hash(user.senha, saltRounds);
+  const saltRounds = 10;
+  user.Senha = await bcrypt.hash(user.Senha, saltRounds);
 });
 
-// User.sync({force: true})
+// Função para buscar todos os usuários
+User.getAllUsers = (callback) => {
+  User.findAll()
+    .then(users => callback(null, users))
+    .catch(err => callback(err));
+};
+
+// Função para criar usuário
+User.createUser = (Nome, Email, Senha, Cargo, callback) => {
+  User.create({ Nome, Email, Senha, Cargo })
+    .then(() => callback(null))
+    .catch(err => callback(err));
+};
+
+// Função para atualizar usuário
+User.updateUser = (id, Nome, Email, Cargo, callback) => {
+  User.update({ Nome, Email, Cargo }, { where: { id } })
+    .then(() => callback(null))
+    .catch(err => callback(err));
+};
+
+// Função para deletar usuário
+User.deleteUser = (id, callback) => {
+  User.destroy({ where: { id } })
+    .then(() => callback(null))
+    .catch(err => callback(err));
+};
+
 module.exports = User;
