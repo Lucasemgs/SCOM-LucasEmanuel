@@ -34,28 +34,25 @@ User.beforeCreate(async (user, options) => {
   user.Senha = await bcrypt.hash(user.Senha, saltRounds);
 });
 
-// Função para buscar todos os usuários
+// Funções CRUD de Usuário
 User.getAllUsers = (callback) => {
   User.findAll()
     .then(users => callback(null, users))
     .catch(err => callback(err));
 };
 
-// Função para criar usuário
 User.createUser = (Nome, Email, Senha, Cargo, callback) => {
   User.create({ Nome, Email, Senha, Cargo })
     .then(() => callback(null))
     .catch(err => callback(err));
 };
 
-// Função para atualizar usuário
 User.updateUser = (id, Nome, Email, Cargo, callback) => {
   User.update({ Nome, Email, Cargo }, { where: { id } })
     .then(() => callback(null))
     .catch(err => callback(err));
 };
 
-// Função para deletar usuário
 User.deleteUser = (id, callback) => {
   User.destroy({ where: { id } })
     .then(() => callback(null))
